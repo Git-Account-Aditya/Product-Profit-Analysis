@@ -3,6 +3,7 @@ Module 2 — Division Performance Dashboard
   • Revenue vs profit comparison
   • Margin distribution by division
 """
+import pandas as pd
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
@@ -70,9 +71,50 @@ def render(filtered_df, avg_margin):
         st.plotly_chart(fig_div, use_container_width=True)
 
     # Insight
+    # ── Division Health Classification ──
+    div_metrics["Cost Efficiency"] = (div_metrics["Gross Profit"] / div_metrics["Cost"]).round(3)
     div_metrics["Gap (pp)"] = (div_metrics["Profit Share (%)"] - div_metrics["Revenue Share (%)"]).round(2)
+    
+    median_cost_eff = div_metrics["Cost Efficiency"].median()
+    
+    def classify_div(row):
+        eff_score = 0
+        if row["Profit Share (%)"] > row["Revenue Share (%)"]: eff_score += 1
+        if row["Average Margin (%)"] > avg_margin: eff_score += 1
+        if row["Cost Efficiency"] > median_cost_eff: eff_score += 1
+        
+        issue_score = 0
+        if row["Revenue Share (%)"] > row["Profit Share (%)"]: issue_score += 1
+        if row["Average Margin (%)"] < avg_margin: issue_score += 1
+        if row["Cost Efficiency"] < median_cost_eff: issue_score += 1
+        
+        if eff_score >= 2: return "Strong Financial Efficiency", COLORS["success"]
+        if issue_score >= 2: return "Significant Structural Issues", COLORS["danger"]
+        if issue_score >= 1: return "Moderate Margin Concerns", COLORS["warning"]
+        return "Healthy", COLORS["info"]
+
+    div_metrics[["Health Status", "Health Color"]] = div_metrics.apply(
+        lambda r: pd.Series(classify_div(r)), axis=1
+    )
+
     best_div = div_metrics.loc[div_metrics["Gap (pp)"].idxmax()]
     worst_div = div_metrics.loc[div_metrics["Gap (pp)"].idxmin()]
+    
+    # Hero status cards for divisions
+    st.markdown("#### 🏥 Division Financial Health")
+    health_cols = st.columns(len(div_metrics))
+    for i, (_, row) in enumerate(div_metrics.iterrows()):
+        with health_cols[i]:
+            st.markdown(f"""
+            <div style="background:rgba(30,41,59,0.5);border-left:4px solid {row['Health Color']};padding:12px;border-radius:8px;">
+                <p style="color:#94a3b8;font-size:0.75rem;margin:0;">{row['Division']}</p>
+                <p style="color:{row['Health Color']};font-weight:700;margin:2px 0;">{row['Health Status']}</p>
+                <p style="color:#e2e8f0;font-size:0.7rem;margin:0;">Gap: {row['Gap (pp)']:+.1f}pp | Eff: {row['Cost Efficiency']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
     insight_callout(
         f"💡 <strong>{best_div['Division']}</strong> over-indexes on profit "
         f"(gap: +{best_div['Gap (pp)']:.1f}pp) — "
