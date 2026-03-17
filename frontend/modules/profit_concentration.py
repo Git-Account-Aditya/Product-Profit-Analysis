@@ -169,3 +169,49 @@ def render(filtered_df):
     col_ins1, col_ins2 = st.columns(2)
     col_ins1.success(f"**{pareto['pct_80_rev']:.1f}%** of products generate **80%** of revenue")
     col_ins2.success(f"**{pareto['pct_80_profit']:.1f}%** of products generate **80%** of profit")
+
+    st.markdown("---")
+
+    # ── State/Region Congestion Analysis ──
+    from analysis_helpers import compute_state_congestion
+    st.markdown("### 🏁 State & Regional Congestion Detection")
+    st.markdown("Identification of regions and states with disproportionately high order volume.")
+    
+    congestion = compute_state_congestion(filtered_df)
+    state_df = congestion["state_df"].head(10)
+    
+    col_cg1, col_cg2 = st.columns([1, 1.2])
+    
+    with col_cg1:
+        fig_state = go.Figure()
+        risk_colors = {"HIGH": COLORS["danger"], "MEDIUM": COLORS["warning"], "LOW": COLORS["success"]}
+        bar_colors_state = [risk_colors.get(r, COLORS["primary"]) for r in state_df["Risk"]]
+        
+        fig_state.add_trace(go.Bar(
+            y=state_df["State/Province"], x=state_df["Order Share (%)"],
+            orientation="h", marker_color=bar_colors_state,
+            marker=dict(cornerradius=8),
+            text=[f"{s:.1f}%" for s in state_df["Order Share (%)"]],
+            textposition="outside", textfont=dict(size=12, color="#e0e7ff"),
+        ))
+        fig_state.update_layout(**styled_layout(
+            margin=dict(l=20, r=80, t=10, b=20), height=400,
+            xaxis_title="Order Share (%)", yaxis=dict(autorange="reversed"),
+            xaxis=dict(range=[0, state_df["Order Share (%)"].max() * 1.25]),
+        ))
+        st.plotly_chart(fig_state, use_container_width=True)
+
+    with col_cg2:
+        st.markdown("#### Top States Data")
+        st.dataframe(
+            state_df[["State/Province", "Region", "Total_Orders", "Order Share (%)", "Risk"]].style.applymap(
+                lambda x: f"color: {risk_colors.get(x, 'inherit')}; font-weight: bold;" if x in risk_colors else ""
+            ),
+            use_container_width=True, hide_index=True
+        )
+    
+    insight_callout(
+        f"📍 <strong>{congestion['states_80']} out of {congestion['total_states']} states</strong> "
+        f"handle 80% of all orders. High concentration in <strong>{state_df.iloc[0]['State/Province']}</strong> "
+        f"({state_df.iloc[0]['Order Share (%)']:.1f}%) peaks operational risk."
+    )
