@@ -1,8 +1,3 @@
-"""
-Module 4 — Profit Concentration Analysis
-  • Pareto charts
-  • Dependency indicators
-"""
 import streamlit as st
 import plotly.graph_objects as go
 
@@ -15,7 +10,7 @@ def render(filtered_df):
     """Render the Profit Concentration tab."""
 
     module_header(
-        "📊", "green", "Profit Concentration Analysis",
+        "", "green", "Profit Concentration Analysis",
         "Pareto charts & dependency risk indicators",
     )
 
@@ -39,7 +34,7 @@ def render(filtered_df):
     st.markdown("---")
 
     # ── Pareto Charts ──
-    st.markdown("### 📈 Pareto Analysis")
+    st.markdown("### Pareto Analysis")
     col_pr1, col_pr2 = st.columns(2)
 
     with col_pr1:
@@ -107,7 +102,7 @@ def render(filtered_df):
     st.markdown("---")
 
     # ── Dependency Indicators ──
-    st.markdown("### 🎯 Dependency Risk Indicators")
+    st.markdown("### Dependency Risk Indicators")
 
     rev_shares = rev_df["Revenue Share (%)"].values
     product_hhi = (rev_shares ** 2).sum()
@@ -136,13 +131,13 @@ def render(filtered_df):
     )
 
     insight_callout(
-        f"📊 <strong>Revenue HHI: {product_hhi:.0f}</strong> ({rev_label} concentration) — "
+        f"<strong>Revenue HHI: {product_hhi:.0f}</strong> ({rev_label} concentration) — "
         f"<strong>Profit HHI: {profit_hhi:.0f}</strong> ({prof_label} concentration). "
-        f"{'⚠️ High dependency on few products.' if rev_label != 'LOW' else '✅ Revenue is well-diversified.'}"
+        f"{'High dependency on few products.' if rev_label != 'LOW' else 'Revenue is well-diversified.'}"
     )
 
     # Revenue vs Profit share gap
-    st.markdown("### 📊 Revenue Share vs Profit Share Gap")
+    st.markdown("### Revenue Share vs Profit Share Gap")
     merged = rev_df[["Product Name", "Revenue Share (%)"]].merge(
         prof_df[["Product Name", "Profit Share (%)"]], on="Product Name"
     )
@@ -174,7 +169,7 @@ def render(filtered_df):
 
     # ── State/Region Congestion Analysis ──
     from analysis_helpers import compute_state_congestion
-    st.markdown("### 🏁 State & Regional Congestion Detection")
+    st.markdown("### State & Regional Congestion Detection")
     st.markdown("Identification of regions and states with disproportionately high order volume.")
     
     congestion = compute_state_congestion(filtered_df)
@@ -211,7 +206,7 @@ def render(filtered_df):
         )
     
     insight_callout(
-        f"📍 <strong>{congestion['states_80']} out of {congestion['total_states']} states</strong> "
+        f"<strong>{congestion['states_80']} out of {congestion['total_states']} states</strong> "
         f"handle 80% of all orders. High concentration in <strong>{state_df.iloc[0]['State/Province']}</strong> "
         f"({state_df.iloc[0]['Order Share (%)']:.1f}%) peaks operational risk."
     )

@@ -1,10 +1,3 @@
-"""
-Global configuration: color palette, chart defaults, and constants.
-"""
-
-# ──────────────────────────────────────────────────────────────
-# Color Palette
-# ──────────────────────────────────────────────────────────────
 COLORS = {
     "primary": "#8b5cf6",
     "secondary": "#06b6d4",
@@ -46,15 +39,8 @@ CHART_LAYOUT_DEFAULTS = dict(
     ),
 )
 
-
 def styled_layout(**kwargs):
-    """Return merged Plotly layout dict with global defaults.
-
-    Performs a shallow-deep merge: top-level dict values (xaxis, yaxis,
-    legend, font, coloraxis_colorbar) are merged rather than replaced so
-    that callers can add e.g. ``xaxis_title`` without losing the global
-    font / tick settings.
-    """
+    """Return merged Plotly layout dict with global defaults."""
     import copy
     layout = copy.deepcopy(CHART_LAYOUT_DEFAULTS)
     _MERGE_KEYS = {"xaxis", "yaxis", "yaxis2", "font", "legend",

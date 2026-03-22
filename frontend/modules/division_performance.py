@@ -1,8 +1,3 @@
-"""
-Module 2 — Division Performance Dashboard
-  • Revenue vs profit comparison
-  • Margin distribution by division
-"""
 import pandas as pd
 import streamlit as st
 import plotly.express as px
@@ -17,14 +12,14 @@ def render(filtered_df, avg_margin):
     """Render the Division Performance tab."""
 
     module_header(
-        "🏢", "cyan", "Division Performance Dashboard",
+        "", "cyan", "Division Performance Dashboard",
         "Revenue vs profit comparison & margin distribution by division",
     )
 
     div_metrics = compute_division_metrics(filtered_df)
 
     # ── Revenue vs Profit Comparison ──
-    st.markdown("### 📊 Revenue vs Profit Comparison")
+    st.markdown("### Revenue vs Profit Comparison")
     col_rv1, col_rv2 = st.columns([3, 2])
 
     with col_rv1:
@@ -101,7 +96,7 @@ def render(filtered_df, avg_margin):
     worst_div = div_metrics.loc[div_metrics["Gap (pp)"].idxmin()]
     
     # Hero status cards for divisions
-    st.markdown("#### 🏥 Division Financial Health")
+    st.markdown("#### Division Financial Health")
     health_cols = st.columns(len(div_metrics))
     for i, (_, row) in enumerate(div_metrics.iterrows()):
         with health_cols[i]:
@@ -116,7 +111,7 @@ def render(filtered_df, avg_margin):
     st.markdown("<br>", unsafe_allow_html=True)
     
     insight_callout(
-        f"💡 <strong>{best_div['Division']}</strong> over-indexes on profit "
+        f"<strong>{best_div['Division']}</strong> over-indexes on profit "
         f"(gap: +{best_div['Gap (pp)']:.1f}pp) — "
         f"<strong>{worst_div['Division']}</strong> under-indexes "
         f"(gap: {worst_div['Gap (pp)']:.1f}pp)"
@@ -125,7 +120,7 @@ def render(filtered_df, avg_margin):
     st.markdown("---")
 
     # ── Margin Distribution ──
-    st.markdown("### 📐 Margin Distribution by Division")
+    st.markdown("### Margin Distribution by Division")
     col_md1, col_md2 = st.columns(2)
 
     with col_md1:
@@ -174,7 +169,7 @@ def render(filtered_df, avg_margin):
         st.plotly_chart(fig_gauge, use_container_width=True)
 
     # ── Division Summary Table ──
-    st.markdown("### 📋 Division Summary")
+    st.markdown("### Division Summary")
     st.dataframe(
         div_metrics.style.format({
             "Sales": "${:,.2f}", "Gross Profit": "${:,.2f}", "Cost": "${:,.2f}",
@@ -187,7 +182,7 @@ def render(filtered_df, avg_margin):
     st.markdown("---")
 
     # ── Division × Product Heatmap ──
-    st.markdown("### 🗺️ Division × Product Margin Heatmap")
+    st.markdown("### Division × Product Margin Heatmap")
     heatmap_data = filtered_df.groupby(["Division", "Product Name"]).agg(
         Sales=("Sales", "sum"), Profit=("Gross Profit", "sum")
     ).reset_index()

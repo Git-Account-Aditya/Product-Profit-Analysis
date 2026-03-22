@@ -1,7 +1,3 @@
-"""
-KPI and metrics computation functions.
-All aggregation logic is centralised here for reuse across pages.
-"""
 import numpy as np
 import pandas as pd
 

@@ -1,6 +1,3 @@
-"""
-Reusable UI helper components for the dashboard.
-"""
 import streamlit as st
 
 
