@@ -1,9 +1,3 @@
-"""
-Module 1 — Product Profitability Overview
-  • Product-level margin leaderboard
-  • Profit contribution charts
-  • Full KPI table with all 5 requested KPIs
-"""
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
@@ -17,7 +11,7 @@ def render(filtered_df, product_filtered_df, margin_threshold, product_search, a
     """Render the Product Profitability tab."""
 
     module_header(
-        "🏷️", "purple", "Product Profitability Overview",
+        "", "purple", "Product Profitability Overview",
         "Product-level margin leaderboard & profit contribution analysis",
     )
 
@@ -52,10 +46,10 @@ def render(filtered_df, product_filtered_df, margin_threshold, product_search, a
     ])
 
     # ── Margin Leaderboard ──
-    st.markdown("### 🏆 Product Margin Leaderboard")
+    st.markdown("### Product Margin Leaderboard")
     if product_search.strip():
         insight_callout(
-            f'🔍 Search active: showing products matching "<strong>{product_search.strip()}</strong>"'
+            f'Search active: showing products matching "<strong>{product_search.strip()}</strong>"'
         )
 
     leaderboard = margin_filtered.sort_values("Gross Margin (%)", ascending=False).copy()
@@ -104,15 +98,15 @@ def render(filtered_df, product_filtered_df, margin_threshold, product_search, a
     n_cyan = sum(1 for m in leaderboard["Gross Margin (%)"] if 30 <= m < 50)
     n_yellow = sum(1 for m in leaderboard["Gross Margin (%)"] if 15 <= m < 30)
     n_red = sum(1 for m in leaderboard["Gross Margin (%)"] if m < 15)
-    col_t1.success(f"🟢 **{n_green}** Premium (≥50%)")
-    col_t2.info(f"🔵 **{n_cyan}** Healthy (30-50%)")
-    col_t3.warning(f"🟡 **{n_yellow}** At Risk (15-30%)")
-    col_t4.error(f"🔴 **{n_red}** Critical (<15%)")
+    col_t1.success(f"**{n_green}** Premium (≥50%)")
+    col_t2.info(f"**{n_cyan}** Healthy (30-50%)")
+    col_t3.warning(f"**{n_yellow}** At Risk (15-30%)")
+    col_t4.error(f"**{n_red}** Critical (<15%)")
 
     st.markdown("---")
 
     # ── Profit Contribution Charts ──
-    st.markdown("### 📊 Profit Contribution Analysis")
+    st.markdown("### Profit Contribution Analysis")
     col_pc1, col_pc2 = st.columns(2)
 
     with col_pc1:
@@ -142,7 +136,7 @@ def render(filtered_df, product_filtered_df, margin_threshold, product_search, a
     st.markdown("---")
 
     # ── Margin Volatility Chart ──
-    st.markdown("### 📉 Margin Volatility by Product")
+    st.markdown("### Margin Volatility by Product")
     vol_sorted = margin_filtered.sort_values("Margin Volatility (%)", ascending=False)
     vol_colors = [COLORS["danger"] if v >= 8 else COLORS["warning"] if v >= 3 else COLORS["success"]
                   for v in vol_sorted["Margin Volatility (%)"]]
@@ -161,14 +155,14 @@ def render(filtered_df, product_filtered_df, margin_threshold, product_search, a
     ))
     st.plotly_chart(fig_vol, use_container_width=True)
     insight_callout(
-        "📉 <strong>Margin Volatility</strong> measures the month-to-month standard deviation of each product's "
+        "<strong>Margin Volatility</strong> measures the month-to-month standard deviation of each product's "
         "gross margin. Higher volatility indicates less predictable profitability."
     )
 
     st.markdown("---")
 
     # ── Detailed Metrics Table ──
-    st.markdown("### 📋 Detailed Product KPIs")
+    st.markdown("### Detailed Product KPIs")
     display_cols = [
         "Rank", "Product Name", "Gross Margin (%)", "Profit per Unit",
         "Revenue Contribution (%)", "Profit Contribution (%)", "Margin Volatility (%)",

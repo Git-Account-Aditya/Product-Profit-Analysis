@@ -1,6 +1,3 @@
-"""
-Data loading and caching for the Streamlit dashboard.
-"""
 import pandas as pd
 import streamlit as st
 from pathlib import Path

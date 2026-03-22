@@ -1,10 +1,5 @@
-"""
-Analysis helper functions for the Streamlit dashboard.
-Consolidates computations from pareto_analysis.py and cost_structure_diagnostics.py.
-"""
 import numpy as np
 import pandas as pd
-
 
 def compute_product_pareto(df: pd.DataFrame) -> dict:
     """Compute product-level Pareto data for revenue and profit."""

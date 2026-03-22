@@ -1,8 +1,3 @@
-"""
-Module 3 — Cost vs Margin Diagnostics
-  • Cost-sales scatter plots
-  • Margin risk flags
-"""
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
@@ -16,7 +11,7 @@ def render(filtered_df, margin_threshold):
     """Render the Cost vs Margin Diagnostics tab."""
 
     module_header(
-        "💰", "pink", "Cost vs Margin Diagnostics",
+        "", "pink", "Cost vs Margin Diagnostics",
         "Cost-sales scatter plots & margin risk flags",
     )
 
@@ -37,7 +32,7 @@ def render(filtered_df, margin_threshold):
     st.markdown("---")
 
     # ── Cost vs Sales Scatter ──
-    st.markdown("### 🔬 Cost vs Sales Scatter Plot")
+    st.markdown("### Cost vs Sales Scatter Plot")
     fig_scat = px.scatter(
         cost_df, x="Total_Sales", y="Total_Cost", size="Total_Units",
         color="Margin (%)", color_continuous_scale="RdYlGn",
@@ -65,14 +60,14 @@ def render(filtered_df, margin_threshold):
     st.plotly_chart(fig_scat, use_container_width=True)
 
     insight_callout(
-        "💡 Products <strong>above</strong> the break-even line are operating at a loss. "
+        "Products <strong>above</strong> the break-even line are operating at a loss. "
         "Bubble size represents unit volume. Color encodes margin strength."
     )
 
     st.markdown("---")
 
     # ── Cost-Margin Quadrant & Margin Risk Flags ──
-    st.markdown("### 🎯 Cost-Margin Quadrant Analysis")
+    st.markdown("### Cost-Margin Quadrant Analysis")
     col_q1, col_q2 = st.columns(2)
 
     with col_q1:
@@ -87,13 +82,13 @@ def render(filtered_df, margin_threshold):
                            line_color="rgba(255,255,255,0.25)")
         fig_quad.add_vline(x=overall_cost_ratio, line_dash="dash",
                            line_color="rgba(255,255,255,0.25)")
-        fig_quad.add_annotation(x=25, y=90, text="⭐ Stars", showarrow=False,
+        fig_quad.add_annotation(x=25, y=90, text="Stars", showarrow=False,
                                 font=dict(color="#34d399", size=14))
-        fig_quad.add_annotation(x=85, y=90, text="💪 Cost-Heavy Winners", showarrow=False,
+        fig_quad.add_annotation(x=85, y=90, text="Cost-Heavy Winners", showarrow=False,
                                 font=dict(color="#fbbf24", size=14))
-        fig_quad.add_annotation(x=25, y=5, text="📉 Underperformers", showarrow=False,
+        fig_quad.add_annotation(x=25, y=5, text="Underperformers", showarrow=False,
                                 font=dict(color="#f87171", size=14))
-        fig_quad.add_annotation(x=85, y=5, text="🚨 Danger Zone", showarrow=False,
+        fig_quad.add_annotation(x=85, y=5, text="Danger Zone", showarrow=False,
                                 font=dict(color="#f87171", size=14))
         fig_quad.update_layout(**styled_layout(
             margin=dict(l=20, r=20, t=10, b=20), height=450,
@@ -103,7 +98,7 @@ def render(filtered_df, margin_threshold):
         st.plotly_chart(fig_quad, use_container_width=True)
 
     with col_q2:
-        st.markdown("#### ⚠️ Margin Risk Flags")
+        st.markdown("#### Margin Risk Flags")
         sorted_cost = cost_df.sort_values("Margin (%)", ascending=True)
         action_colors = {
             "Discontinuation Review": COLORS["danger"],
@@ -143,7 +138,7 @@ def render(filtered_df, margin_threshold):
     st.markdown("---")
 
     # ── Action Summary Table ──
-    st.markdown("### 🏷️ Product Action Flags")
+    st.markdown("### Product Action Flags")
     display_cost = cost_df[["Product Name", "Avg Price/Unit", "Avg Cost/Unit", "Margin (%)",
                              "Markup (%)", "Revenue Share (%)", "Action"]].copy()
     display_cost = display_cost.sort_values("Margin (%)")
@@ -157,13 +152,13 @@ def render(filtered_df, margin_threshold):
     )
 
     # Action counts
-    st.markdown("### 📊 Action Distribution")
+    st.markdown("### Action Distribution")
     ac1, ac2, ac3, ac4 = st.columns(4)
     disc_count = cost_df["Action"].str.contains("Discontinuation").sum()
     cost_neg_count = cost_df["Action"].str.contains("Cost Renegotiation").sum()
     reprice_count = cost_df["Action"].str.contains("Repricing").sum()
     ok_count = cost_df["Action"].str.contains("No Action").sum()
-    ac1.error(f"🔴 **{disc_count}** Discontinuation Review")
-    ac2.warning(f"🟠 **{cost_neg_count}** Cost Renegotiation")
-    ac3.info(f"🟡 **{reprice_count}** Repricing Needed")
-    ac4.success(f"✅ **{ok_count}** No Action Needed")
+    ac1.error(f"**{disc_count}** Discontinuation Review")
+    ac2.warning(f"**{cost_neg_count}** Cost Renegotiation")
+    ac3.info(f"**{reprice_count}** Repricing Needed")
+    ac4.success(f"**{ok_count}** No Action Needed")

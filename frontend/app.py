@@ -1,9 +1,3 @@
-"""
-Product Profit Analyzer — Main Entry Point
-───────────────────────────────────────────
-A slim orchestrator that wires together sidebar filters, KPI header,
-and the four dashboard modules via their page modules.
-"""
 import streamlit as st
 
 from styles import CUSTOM_CSS
@@ -11,16 +5,12 @@ from data_loader import load_data
 from metrics import compute_overall_kpis
 from components import kpi_card, kpi_grid
 
-# Page modules (named 'modules' to avoid Streamlit's multipage auto-detection)
 from modules import product_profitability, division_performance, cost_diagnostics
 from modules import profit_concentration, raw_data
 
-# ──────────────────────────────────────────────────────────────
 # Page Config
-# ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Product Profit Analyzer",
-    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -28,20 +18,14 @@ st.set_page_config(
 # Inject CSS
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
-
-# ──────────────────────────────────────────────────────────────
 # Main
-# ──────────────────────────────────────────────────────────────
 def main():
     df = load_data()
-
-    # ══════════════════════════════════════════════════════════
+    
     #  SIDEBAR — All User Capabilities
-    # ══════════════════════════════════════════════════════════
     with st.sidebar:
         st.markdown("""
         <div style="text-align:center;margin-bottom:20px;">
-            <span style="font-size:2rem;">📊</span>
             <h2 style="margin:4px 0 0 0;font-size:1.1rem;background:linear-gradient(135deg,#a78bfa,#06b6d4);
                        -webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;">
                 Profit Analyzer
@@ -53,7 +37,7 @@ def main():
         st.markdown("---")
 
         # 1) Date Range Selector
-        st.markdown('<p class="filter-label">📅 Date Range</p>', unsafe_allow_html=True)
+        st.markdown('<p class="filter-label">Date Range</p>', unsafe_allow_html=True)
         min_date = df["Order Date"].min().date()
         max_date = df["Order Date"].max().date()
         date_range = st.date_input(
@@ -72,7 +56,7 @@ def main():
         st.markdown("---")
 
         # 2) Division Filter
-        st.markdown('<p class="filter-label">🏢 Division</p>', unsafe_allow_html=True)
+        st.markdown('<p class="filter-label">Division</p>', unsafe_allow_html=True)
         all_divisions = sorted(df["Division"].unique())
         selected_divisions = st.multiselect(
             "Division", options=all_divisions, default=all_divisions,
@@ -80,7 +64,7 @@ def main():
         )
 
         # 3) Margin Threshold Slider
-        st.markdown('<p class="filter-label">📐 Margin Threshold</p>', unsafe_allow_html=True)
+        st.markdown('<p class="filter-label">Margin Threshold</p>', unsafe_allow_html=True)
         margin_threshold = st.slider(
             "Minimum Gross Margin (%)", min_value=0, max_value=100, value=0, step=1,
             key="margin_slider",
@@ -90,7 +74,7 @@ def main():
         st.caption(f"Showing products with margin ≥ **{margin_threshold}%**")
 
         # 4) Product Search
-        st.markdown('<p class="filter-label">🔍 Product Search</p>', unsafe_allow_html=True)
+        st.markdown('<p class="filter-label">Product Search</p>', unsafe_allow_html=True)
         product_search = st.text_input(
             "Search Products", value="", placeholder="Type product name...",
             key="product_search", label_visibility="collapsed",
@@ -99,14 +83,14 @@ def main():
         st.markdown("---")
 
         # Additional Filters
-        st.markdown('<p class="filter-label">🌍 Region</p>', unsafe_allow_html=True)
+        st.markdown('<p class="filter-label">Region</p>', unsafe_allow_html=True)
         all_regions = sorted(df["Region"].unique())
         selected_regions = st.multiselect(
             "Region", options=all_regions, default=all_regions,
             key="reg_filter", label_visibility="collapsed",
         )
 
-        st.markdown('<p class="filter-label">🚚 Ship Mode</p>', unsafe_allow_html=True)
+        st.markdown('<p class="filter-label">Ship Mode</p>', unsafe_allow_html=True)
         all_ship_modes = sorted(df["Ship Mode"].unique())
         selected_ship_modes = st.multiselect(
             "Ship Mode", options=all_ship_modes, default=all_ship_modes,
@@ -139,7 +123,7 @@ def main():
         product_filtered_df = filtered_df
 
     if filtered_df.empty:
-        st.warning("⚠️ No data matches the selected filters. Please adjust your filters.")
+        st.warning("No data matches the selected filters. Please adjust your filters.")
         return
 
     # ══════════════════════════════════════════════════════════
@@ -147,7 +131,7 @@ def main():
     # ══════════════════════════════════════════════════════════
     st.markdown("""
     <div class="hero-header">
-        <h1>📊 Product Profit Analyzer</h1>
+        <h1>Product Profit Analyzer</h1>
         <p class="hero-subtitle">Nassau Candy Distributor — Interactive Profitability Intelligence Dashboard</p>
     </div>
     """, unsafe_allow_html=True)
@@ -178,11 +162,11 @@ def main():
     #  Navigation Tabs → Page Modules
     # ══════════════════════════════════════════════════════════
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "🏷️ Product Profitability",
-        "🏢 Division Performance",
-        "💰 Cost vs Margin Diagnostics",
-        "📊 Profit Concentration",
-        "📋 Raw Data",
+        "Product Profitability",
+        "Division Performance",
+        "Cost vs Margin Diagnostics",
+        "Profit Concentration",
+        "Raw Data",
     ])
 
     with tab1:
